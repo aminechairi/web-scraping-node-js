@@ -6,36 +6,39 @@ const fs = require('fs');
 const workbook = new ExcelJS.Workbook();
 const worksheet = workbook.addWorksheet('Data');
 
-axios.get('https://glovoapp.com/ma/fr/tetouan/mcdonaldsr-tet55/?content=sauces-c.1415115344')
+let url = 'https://glovoapp.com/ma/fr/tetouan/mcdonaldsr-tet55/?content=sauces-c.1415115344';
+
+axios.get(url)
   .then(response => {
 
     const $ = cheerio.load(response.data);
 
     // Extract data from the website
     const data = [];
-      $("div[data-test-id='list-element']").map((i, item) => {
-        
-        let names = $(item)
-          .children("[data-test-id='product-row-content']")
-          .children(".product-row__content")
-          .children(".product-row__info")
-          .children(".product-row__name")
-          .children("span")
-          .children('span')
-          .text();
 
-        let imgs = $(item)
-          .children("[data-test-id='product-row-content']")
-          .children(".product-row__content")
-          .children("img")
-          .attr("src");
+    $("div[data-test-id='list-element']").map((i, item) => {
+      
+      let names = $(item)
+        .children("[data-test-id='product-row-content']")
+        .children(".product-row__content")
+        .children(".product-row__info")
+        .children(".product-row__name")
+        .children("span")
+        .children('span')
+        .text();
 
-        let prices = $(item)
-          .children("[data-test-id='product-row-content']")
-          .children(".product-row__bottom")
-          .children(".product-price")
-          .children("span")
-          .text();
+      let imgs = $(item)
+        .children("[data-test-id='product-row-content']")
+        .children(".product-row__content")
+        .children("img")
+        .attr("src");
+
+      let prices = $(item)
+        .children("[data-test-id='product-row-content']")
+        .children(".product-row__bottom")
+        .children(".product-price")
+        .children("span")
+        .text();
 
         data.push(
           {
@@ -45,21 +48,17 @@ axios.get('https://glovoapp.com/ma/fr/tetouan/mcdonaldsr-tet55/?content=sauces-c
           },
         );
 
-      });
-      console.log(
-        data
-      );
-
-
-
-    // Save data to a JSON file
-    fs.writeFile('./dataJson/SAUCES.json', JSON.stringify(data), err => {
-      if (err) throw err;
-      console.log('Data saved to data.json');
     });
 
+    console.log(
+      data
+    );
 
-
+    // // Save data to a JSON file
+    // fs.writeFile('./dataJson/SAUCES.json', JSON.stringify(data), err => {
+    //   if (err) throw err;
+    //   console.log('Data saved to data.json');
+    // });
 
     // // Add data to the worksheet
     // worksheet.columns = [
@@ -72,11 +71,11 @@ axios.get('https://glovoapp.com/ma/fr/tetouan/mcdonaldsr-tet55/?content=sauces-c
     // });
 
     // // Save the workbook to a file
-    // return workbook.xlsx.writeFile('./data/SAUCES.xlsx');
+    // return workbook.xlsx.writeFile('./dataExcel/SAUCES.xlsx');
 
   })
   .then(() => {
-    console.log('Data saved to data.xlsx');
+    console.log('Data saved file');
   })
   .catch(error => {
     console.error(error);
